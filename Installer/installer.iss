@@ -4,7 +4,7 @@
 #define MyAppName "Sacura Chess"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Vladik Aladik"
-#define MyAppURL "https://github.com/D4cLoves/Lc-0_Chess"
+#define MyAppURL "https://github.com/D4cLoves/SacuraChess"
 #define MyAppExeName "Lc-0_Chess.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".myp"

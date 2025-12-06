@@ -33,7 +33,7 @@
 
 ### Скачать
 
-Скачайте последнюю версию из раздела [Releases](https://github.com/D4cLoves/Lc-0_Chess/releases).
+Скачайте последнюю версию из раздела [Releases](https://github.com/D4cLoves/SacuraChess/releases).
 
 Запустите `SakuraChessSetup.exe` и следуйте инструкциям установщика.
 
@@ -60,7 +60,7 @@
 
 ```bash
 # Клонируйте репозиторий
-git clone https://github.com/D4cLoves/Lc-0_Chess.git
+git clone https://github.com/D4cLoves/SacuraChess.git
 cd Lc-0_Chess
 
 # Восстановите зависимости
@@ -126,7 +126,7 @@ dotnet test
 
 ## 📞 Поддержка
 
-Если у вас возникли вопросы или проблемы, пожалуйста, создайте [Issue](https://github.com/D4cLoves/Lc-0_Chess/issues).
+Если у вас возникли вопросы или проблемы, пожалуйста, создайте [Issue](https://github.com/D4cLoves/SacuraChess/issues).
 
 ---
 
