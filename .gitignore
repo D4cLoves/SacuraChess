@@ -69,6 +69,12 @@ TestResults/
 ## Installer output
 Installer/Output/
 
+## Large Lc0 engine files (exceed GitHub 100MB limit)
+# These files should be included in releases but not in git
+Lc-0_Chess/Lc-0/*.dll
+Lc-0_Chess/Lc-0/*.exe
+Lc-0_Chess/Lc-0/*.pb.gz
+
 ## Temporary files
 *.tmp
 *.temp
