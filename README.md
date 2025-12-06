@@ -24,14 +24,14 @@
 
 <div align="center">
 
+### Главное меню
 ![Главное меню](docs/screenshots/MainMenu.png)
-*Главное меню приложения*
 
+### Игровая доска
 ![Игровая доска](docs/screenshots/Game.png)
-*Игровая доска с анализом позиции*
 
+### Настройки игры
 ![Настройки игры](docs/screenshots/SettingGame.png)
-*Окно настройки игры*
 
 </div>
 
