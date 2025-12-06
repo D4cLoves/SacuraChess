@@ -1,0 +1,821 @@
+﻿<Window x:Class="Lc_0_Chess.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lc_0_Chess.Views"
+        xmlns:models="clr-namespace:Lc_0_Chess.Models"
+        xmlns:converters="clr-namespace:Lc_0_Chess.Converters"
+        mc:Ignorable="d"
+        Title="Sakura Chess" Height="900" Width="1400"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Converters -->
+        <local:PieceColorToImageConverter x:Key="ColorToQueenImageConverter" PieceType="Queen"/>
+        <local:PieceColorToImageConverter x:Key="ColorToRookImageConverter" PieceType="Rook"/>
+        <local:PieceColorToImageConverter x:Key="ColorToBishopImageConverter" PieceType="Bishop"/>
+        <local:PieceColorToImageConverter x:Key="ColorToKnightImageConverter" PieceType="Knight"/>
+        <converters:HalfWidthConverter x:Key="HalfWidthConverter"/>
+
+        <!-- Sakura Color Palette -->
+        <SolidColorBrush x:Key="SakuraPink" Color="#F8BBD0"/>
+        <SolidColorBrush x:Key="SakuraAccent" Color="#FF9ACD"/>
+        <SolidColorBrush x:Key="SakuraLight" Color="#F0F0F0"/>
+        <SolidColorBrush x:Key="SakuraText" Color="#2D2D2D"/>
+        <SolidColorBrush x:Key="SakuraSecondaryText" Color="#A0A0A0"/>
+        <SolidColorBrush x:Key="Background" Color="#161618"/>
+        <SolidColorBrush x:Key="BackgroundLighter" Color="#1E1E20"/>
+        <SolidColorBrush x:Key="Primary" Color="#1E1E20"/>
+        <SolidColorBrush x:Key="Secondary" Color="#2A2A2E"/>
+        
+        <!-- Chess Board Colors -->
+        <SolidColorBrush x:Key="BoardLightCellBrush" Color="#2B2B2F"/>
+        <SolidColorBrush x:Key="BoardDarkCellBrush" Color="#232325"/>
+        <SolidColorBrush x:Key="BoardBorderBrush" Color="#2D2D31"/>
+        
+        <!-- Chess Board Highlights -->
+        <SolidColorBrush x:Key="SelectedCellHighlight" Color="#26FFB7C5"/>
+        <SolidColorBrush x:Key="PossibleMoveHighlight" Color="#1AFFB7C5"/>
+        <SolidColorBrush x:Key="CaptureHighlight" Color="#26FF4D67"/>
+        <SolidColorBrush x:Key="LastMoveHighlight" Color="#1AFF9ACD"/>
+        <SolidColorBrush x:Key="CheckHighlight" Color="#33FF4D67"/>
+        
+        <!-- Dot Style for Possible Moves -->
+        <Style x:Key="PossibleMoveDotStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Fill" Value="{StaticResource PossibleMoveHighlight}"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" 
+                                    ShadowDepth="0" 
+                                    Direction="0" 
+                                    Opacity="0.3" 
+                                    Color="#FFB7C5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Base Card Style -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Primary}"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="25" ShadowDepth="0" Opacity="0.2" Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Player Card Style -->
+        <Style x:Key="PlayerCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+
+        <Style x:Key="ActivePlayerCardStyle" TargetType="Border" BasedOn="{StaticResource PlayerCardStyle}">
+            <Setter Property="BorderBrush" Value="{StaticResource SakuraAccent}"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.8" Color="{Binding Color, Source={StaticResource SakuraAccent}}"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Button Styles -->
+        <Style x:Key="SakuraButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource SakuraLight}"/>
+            <Setter Property="Background" Value="{StaticResource Secondary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SakuraPink}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="border" Property="Background" Value="#3D3D3D"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SakuraAccent}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#252525"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SakuraIconButtonStyle" TargetType="Button" BasedOn="{StaticResource SakuraButtonStyle}">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Width" Value="50"/>
+        </Style>
+
+        <Style x:Key="PromotionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="15">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#40FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#60FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- History Control Button Style -->
+        <Style x:Key="HistoryControlButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource SakuraLight}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SakuraPink}"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Width" Value="42"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="8">
+                            <ContentPresenter x:Name="content" 
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Secondary}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SakuraAccent}"/>
+                                <Setter Property="Foreground" Value="{StaticResource SakuraAccent}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource SakuraAccent}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Primary}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Text Styles -->
+        <Style x:Key="TitleTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SakuraPink}"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SakuraSecondaryText}"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="TimerTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource SakuraLight}"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="MillisecondsTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource SakuraSecondaryText}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="2,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+        </Style>
+
+        <!-- Other Styles -->
+        <Style x:Key="ChessCellStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="{Binding Background}"/>
+        </Style>
+
+        <!-- Стиль для кнопок прокрутки страницы -->
+        <Style x:Key="SakuraScrollBarPageButtonStyle" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Rectangle Fill="{TemplateBinding Background}" Width="0" Height="0"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для полосы прокрутки -->
+        <Style x:Key="SakuraScrollBarStyle" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="Bg" Background="Transparent" SnapsToDevicePixels="true">
+                            <Border x:Name="TrackBorder" 
+                                    Background="#1AFFFFFF" 
+                                    CornerRadius="6" 
+                                    Margin="0,4"/>
+                            <Track x:Name="PART_Track" 
+                                   IsDirectionReversed="true" 
+                                   Margin="0,4">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" 
+                                                Style="{StaticResource SakuraScrollBarPageButtonStyle}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Grid>
+                                                    <!-- Outer glow -->
+                                                    <Border x:Name="GlowBorder"
+                                                            Background="{StaticResource SakuraPink}"
+                                                            CornerRadius="6"
+                                                            Margin="-2"
+                                                            Opacity="0">
+                                                        <Border.Effect>
+                                                            <BlurEffect Radius="8"/>
+                                                        </Border.Effect>
+                                                    </Border>
+                                                    <!-- Main thumb -->
+                                                    <Border x:Name="ThumbBorder" 
+                                                            Background="{StaticResource SakuraPink}" 
+                                                            CornerRadius="6" 
+                                                            Opacity="0.6"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ThumbBorder"
+                                                                                   Storyboard.TargetProperty="Opacity"
+                                                                                   To="1" Duration="0:0:0.2"/>
+                                                                    <DoubleAnimation Storyboard.TargetName="GlowBorder"
+                                                                                   Storyboard.TargetProperty="Opacity"
+                                                                                   To="0.5" Duration="0:0:0.2"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.EnterActions>
+                                                        <Trigger.ExitActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ThumbBorder"
+                                                                                   Storyboard.TargetProperty="Opacity"
+                                                                                   To="0.6" Duration="0:0:0.2"/>
+                                                                    <DoubleAnimation Storyboard.TargetName="GlowBorder"
+                                                                                   Storyboard.TargetProperty="Opacity"
+                                                                                   To="0" Duration="0:0:0.2"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.ExitActions>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter TargetName="ThumbBorder" Property="Background" Value="{StaticResource SakuraAccent}"/>
+                                                        <Setter TargetName="GlowBorder" Property="Background" Value="{StaticResource SakuraAccent}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"
+                                                Style="{StaticResource SakuraScrollBarPageButtonStyle}"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Sakura ScrollViewer Template -->
+        <ControlTemplate x:Key="SakuraScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
+            <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Rectangle x:Name="Corner" Grid.Column="1" Grid.Row="1" Fill="Transparent"/>
+                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Grid.Column="0" Grid.Row="0" 
+                                      Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" 
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1" Grid.Row="0" 
+                          AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" 
+                          Maximum="{TemplateBinding ScrollableHeight}" 
+                          Minimum="0" Orientation="Vertical" 
+                          ViewportSize="{TemplateBinding ViewportHeight}" 
+                          Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" 
+                          Value="{TemplateBinding VerticalOffset}" 
+                          Style="{StaticResource SakuraScrollBarStyle}"/>
+            </Grid>
+        </ControlTemplate>
+
+        <!-- Sakura Slider Style -->
+        <Style x:Key="SakuraSliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Track x:Name="PART_Track" Grid.Row="1">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                <Border x:Name="TrackBackground" Height="4" 
+                                                        Background="{StaticResource SakuraAccent}" 
+                                                        CornerRadius="2"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                <Border x:Name="TrackBackground" Height="4" 
+                                                        Background="{StaticResource Secondary}" 
+                                                        CornerRadius="2"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Grid>
+                                                    <!-- Outer glow effect -->
+                                                    <Ellipse x:Name="ThumbGlow" Width="20" Height="20" 
+                                                             Fill="{StaticResource SakuraPink}" 
+                                                             Opacity="0.3">
+                                                        <Ellipse.Effect>
+                                                            <BlurEffect Radius="8"/>
+                                                        </Ellipse.Effect>
+                                                    </Ellipse>
+                                                    <!-- Main thumb -->
+                                                    <Ellipse x:Name="ThumbVisual" Width="16" Height="16" 
+                                                             Fill="{StaticResource SakuraPink}"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ThumbGlow" Property="Opacity" Value="0.6"/>
+                                                        <Setter TargetName="ThumbVisual" Property="Fill" Value="{StaticResource SakuraAccent}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter TargetName="ThumbGlow" Property="Opacity" Value="0.8"/>
+                                                        <Setter TargetName="ThumbVisual" Property="Fill" Value="{StaticResource SakuraAccent}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{Binding Source={StaticResource BackgroundLighter}, Path=Color}" Offset="0"/>
+                <GradientStop Color="{Binding Source={StaticResource Background}, Path=Color}" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="BoardColumn" Width="2*"/>
+                <ColumnDefinition x:Name="AnalyticsColumn" Width="1.2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Column: Board and Player Info -->
+            <Grid Grid.Column="0" Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Bot Card -->
+                <Border Grid.Row="0" Margin="0,0,0,20" x:Name="uiBotCard" Style="{StaticResource PlayerCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="{StaticResource Secondary}" CornerRadius="12" Width="60" Height="60">
+                            <TextBlock Text="🤖" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="20,0" VerticalAlignment="Center">
+                            <TextBlock Text="Leela Chess Zero" Foreground="{StaticResource SakuraPink}" FontSize="24" FontWeight="SemiBold"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock x:Name="uiBotRating" Style="{StaticResource SecondaryTextStyle}" FontSize="16"/>
+                                <TextBlock x:Name="uiBotStatus" Margin="10,0,0,0" Style="{StaticResource SecondaryTextStyle}" FontSize="16"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="uiBotTimerMain" Style="{StaticResource TimerTextStyle}" FontSize="32"/>
+                                <TextBlock x:Name="uiBotTimerMs" Style="{StaticResource MillisecondsTextStyle}" FontSize="20" VerticalAlignment="Bottom" Margin="2,0,0,-2"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Chess Board -->
+                <Border Grid.Row="1" Background="{StaticResource Primary}" CornerRadius="20" Margin="10">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.4" Color="#000"/>
+                    </Border.Effect>
+                    <Viewbox Stretch="Uniform" Margin="5">
+                        <Grid>
+                            <Grid x:Name="uiInnerBoardGrid" Width="600" Height="600" SizeChanged="uiInnerBoardGrid_SizeChanged"/>
+                            <Canvas x:Name="AnimationCanvas" Width="600" Height="600" IsHitTestVisible="False"/>
+                        </Grid>
+                    </Viewbox>
+                </Border>
+
+                <!-- Player Card -->
+                <Border Grid.Row="2" Margin="0,20,0,0" x:Name="uiPlayerCard" Style="{StaticResource PlayerCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="{StaticResource Secondary}" CornerRadius="12" Width="60" Height="60">
+                            <TextBlock Text="👤" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="20,0" VerticalAlignment="Center">
+                            <TextBlock Text="Игрок" Foreground="{StaticResource SakuraPink}" FontSize="24" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="uiPlayerStatus" Margin="0,5,0,0" Style="{StaticResource SecondaryTextStyle}" FontSize="16"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="uiPlayerTimerMain" Style="{StaticResource TimerTextStyle}" FontSize="32"/>
+                                <TextBlock x:Name="uiPlayerTimerMs" Style="{StaticResource MillisecondsTextStyle}" FontSize="20" VerticalAlignment="Bottom" Margin="2,0,0,-2"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Right Column: Analytics -->
+            <Grid Grid.Column="1" Margin="10,0,0,0">
+                <Border Style="{StaticResource CardStyle}" Padding="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Title -->
+                        <Border Grid.Row="0" Background="{StaticResource Secondary}" CornerRadius="20,20,0,0" Padding="25,20">
+                            <TextBlock Text="Аналитика и ходы" Style="{StaticResource TitleTextStyle}"/>
+                        </Border>
+
+                        <!-- Content -->
+                        <ScrollViewer Grid.Row="1" 
+                                    VerticalScrollBarVisibility="Auto" 
+                                    HorizontalScrollBarVisibility="Disabled" 
+                                    Margin="20,15,35,15"
+                                    Template="{StaticResource SakuraScrollViewerControlTemplate}">
+                            <StackPanel Margin="0,0,15,0">
+                                <!-- Evaluation Bar -->
+                                <Border Background="{StaticResource Secondary}" CornerRadius="10" Padding="15,10" Margin="0,0,0,15">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Border Background="{StaticResource Primary}" CornerRadius="8" Padding="12,8" Margin="0,0,0,15">
+                                            <TextBlock Text="Оценка позиции" Foreground="{StaticResource SakuraPink}" 
+                                                     FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                        </Border>
+
+                                        <Grid Grid.Row="1" x:Name="EvaluationBar" Height="25" ClipToBounds="True">
+                                            <Border CornerRadius="8">
+                                                <Grid>
+                                                    <Rectangle x:Name="BlackRect" Fill="#454545" HorizontalAlignment="Left" RadiusX="8" RadiusY="8"/>
+                                                    <Rectangle x:Name="WhiteRect" Fill="{StaticResource SakuraLight}" HorizontalAlignment="Right" RadiusX="8" RadiusY="8"/>
+                                                </Grid>
+                                            </Border>
+                                            <TextBlock x:Name="EvaluationText" Text="0.0" Foreground="{StaticResource SakuraText}" FontFamily="Consolas" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock.Effect>
+                                                    <DropShadowEffect BlurRadius="5" ShadowDepth="0" Opacity="0.9" Color="#F0F0F0"/>
+                                                </TextBlock.Effect>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Best Move (improved view) -->
+                                <Border Background="{StaticResource Secondary}" CornerRadius="10" Padding="15,10" Margin="0,0,0,15">
+                                    <StackPanel>
+                                        <Border Background="{StaticResource Primary}" CornerRadius="8" Padding="12,8" Margin="0,0,0,15">
+                                            <TextBlock Text="Лучший ход" Foreground="{StaticResource SakuraPink}" 
+                                                     FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                        </Border>
+                                        <Border Background="{StaticResource Primary}" CornerRadius="8" Padding="15,12">
+                                            <TextBlock x:Name="BestMoveText" Text="--" 
+                                                     FontFamily="Consolas" 
+                                                     FontSize="32" 
+                                                     FontWeight="Bold" 
+                                                     Foreground="{StaticResource SakuraAccent}" 
+                                                     HorizontalAlignment="Center">
+                                                <TextBlock.Effect>
+                                                    <DropShadowEffect BlurRadius="15" 
+                                                                    ShadowDepth="0" 
+                                                                    Opacity="0.3" 
+                                                                    Color="{Binding Color, Source={StaticResource SakuraAccent}}"/>
+                                                </TextBlock.Effect>
+                                            </TextBlock>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Engine summary / fills free space in analytics panel -->
+                                <Border Background="{StaticResource Secondary}" CornerRadius="10" Padding="15,10" Margin="0,0,0,15">
+                                    <StackPanel>
+                                        <!-- Header -->
+                                        <Border Background="{StaticResource Primary}" CornerRadius="8" Padding="12,8" Margin="0,0,0,15">
+                                            <TextBlock Text="План движка" Foreground="{StaticResource SakuraPink}" 
+                                                     FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                        </Border>
+
+                                        <!-- Table info -->
+                                        <StackPanel>
+                                            <!-- Метрики -->
+                                            <StackPanel Orientation="Vertical" Margin="0,0,0,0">
+                                                <DockPanel Margin="0,0,0,6">
+                                                    <Border Background="{StaticResource Primary}" CornerRadius="6" Padding="8,6" MinWidth="40" 
+                                                            DockPanel.Dock="Left" Margin="0,0,10,0">
+                                                        <TextBlock Text="⏳" FontSize="16" HorizontalAlignment="Center"
+                                                                 Foreground="{StaticResource SakuraAccent}"/>
+                                                    </Border>
+                                                    <TextBlock x:Name="DepthText" Foreground="{StaticResource SakuraLight}" 
+                                                             FontSize="16" FontWeight="SemiBold"/>
+                                                </DockPanel>
+                                                <DockPanel Margin="0,0,0,6">
+                                                    <Border Background="{StaticResource Primary}" CornerRadius="6" Padding="8,6" MinWidth="40"
+                                                            DockPanel.Dock="Left" Margin="0,0,10,0">
+                                                        <TextBlock Text="⚡" FontSize="16" HorizontalAlignment="Center"
+                                                                 Foreground="{StaticResource SakuraAccent}"/>
+                                                    </Border>
+                                                    <TextBlock x:Name="NpsText" Foreground="{StaticResource SakuraLight}"
+                                                                 FontSize="16" FontWeight="SemiBold"/>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <Border Background="{StaticResource Primary}" CornerRadius="6" Padding="8,6" MinWidth="40"
+                                                            DockPanel.Dock="Left" Margin="0,0,10,0">
+                                                        <TextBlock Text="🎯" FontSize="16" HorizontalAlignment="Center"
+                                                                 Foreground="{StaticResource SakuraAccent}"/>
+                                                    </Border>
+                                                    <TextBlock x:Name="WdlText" Foreground="{StaticResource SakuraLight}"
+                                                                 FontSize="16" FontWeight="SemiBold"/>
+                                                </DockPanel>
+                                            </StackPanel>
+
+                                            <!-- Score -->
+                                            <DockPanel Margin="0,8,0,0">
+                                                <Border Background="{StaticResource Primary}" CornerRadius="6" Padding="8,6" MinWidth="40"
+                                                        DockPanel.Dock="Left" Margin="0,0,10,0">
+                                                    <TextBlock Text="📈" FontSize="16" HorizontalAlignment="Center"
+                                                                 Foreground="{StaticResource SakuraAccent}"/>
+                                                </Border>
+                                                <TextBlock x:Name="ScoreText" Foreground="{StaticResource SakuraLight}"
+                                                                 FontSize="16" FontWeight="SemiBold"/>
+                                            </DockPanel>
+
+                                            <!-- Policy -->
+                                            <DockPanel Margin="0,6,0,0">
+                                                <Border Background="{StaticResource Primary}" CornerRadius="6" Padding="8,6" MinWidth="40"
+                                                        DockPanel.Dock="Left" Margin="0,0,10,0">
+                                                    <TextBlock Text="📊" FontSize="16" HorizontalAlignment="Center"
+                                                                 Foreground="{StaticResource SakuraAccent}"/>
+                                                </Border>
+                                                <TextBlock x:Name="PolicyText" Foreground="{StaticResource SakuraLight}"
+                                                                 FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                            </DockPanel>
+
+                                            <!-- Time used -->
+                                            <DockPanel Margin="0,6,0,0">
+                                                <Border Background="{StaticResource Primary}" CornerRadius="6" Padding="8,6" MinWidth="40"
+                                                        DockPanel.Dock="Left" Margin="0,0,10,0">
+                                                    <TextBlock Text="⌛" FontSize="16" HorizontalAlignment="Center"
+                                                                 Foreground="{StaticResource SakuraAccent}"/>
+                                                </Border>
+                                                <TextBlock x:Name="TimeText" Foreground="{StaticResource SakuraLight}"
+                                                                 FontSize="16" FontWeight="SemiBold"/>
+                                            </DockPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Move History -->
+                                <Border Background="{StaticResource Secondary}" CornerRadius="10" Padding="15,10" MinHeight="500">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        
+                                        <!-- Header -->
+                                        <Border Background="{StaticResource Primary}" CornerRadius="8" Padding="12,8" Margin="0,0,0,15">
+                                            <TextBlock Text="История ходов" Foreground="{StaticResource SakuraPink}" 
+                                                     FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                        </Border>
+
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"
+                                                    Template="{DynamicResource SakuraScrollViewerControlTemplate}">
+                                            <ItemsControl x:Name="uiMoveHistoryList">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="0,4">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Border Grid.Column="0" Background="{StaticResource Primary}" 
+                                                                      CornerRadius="6" Width="36" Height="36">
+                                                                <TextBlock Text="{Binding MoveNumber}" 
+                                                                         Foreground="{StaticResource SakuraSecondaryText}" 
+                                                                         FontFamily="Consolas" FontSize="16" FontWeight="SemiBold"
+                                                                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                            </Border>
+                                                            <Button Grid.Column="1" Style="{StaticResource SakuraButtonStyle}" 
+                                                                      Margin="8,0,4,0" Click="MoveHistoryItem_Click" 
+                                                                      Tag="{Binding WhiteMoveIndex}" HorizontalAlignment="Stretch"
+                                                                      Height="36">
+                                                                <TextBlock Text="{Binding WhiteMove}" 
+                                                                         FontFamily="Consolas" FontSize="16"/>
+                                                            </Button>
+                                                            <Button Grid.Column="2" Style="{StaticResource SakuraButtonStyle}" 
+                                                                      Margin="4,0,0,0" Click="MoveHistoryItem_Click" 
+                                                                      Tag="{Binding BlackMoveIndex}" HorizontalAlignment="Stretch"
+                                                                      Height="36">
+                                                                <TextBlock Text="{Binding BlackMove}" 
+                                                                         FontFamily="Consolas" FontSize="16"/>
+                                                            </Button>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- History Controls -->
+                        <Border Grid.Row="2" Background="{StaticResource Secondary}" CornerRadius="0,0,20,20" Padding="15,10">
+                            <UniformGrid Columns="4" HorizontalAlignment="Center">
+                                <Button x:Name="historyStartButton" 
+                                        Content="⏮" 
+                                        Style="{StaticResource HistoryControlButtonStyle}" 
+                                        Click="StartButton_Click"/>
+                                <Button x:Name="historyUndoButton" 
+                                        Content="⏪" 
+                                        Style="{StaticResource HistoryControlButtonStyle}" 
+                                        Click="UndoButton_Click"/>
+                                <Button x:Name="historyRedoButton" 
+                                        Content="⏩" 
+                                        Style="{StaticResource HistoryControlButtonStyle}" 
+                                        Click="RedoButton_Click"/>
+                                <Button x:Name="historyEndButton" 
+                                        Content="⏭" 
+                                        Style="{StaticResource HistoryControlButtonStyle}" 
+                                        Click="EndButton_Click"/>
+                            </UniformGrid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Promotion Dialog -->
+        <Grid x:Name="PromotionGrid" Visibility="Collapsed" Background="#90000000">
+            <Border Background="{StaticResource Primary}" CornerRadius="20" BorderBrush="{StaticResource SakuraAccent}" BorderThickness="2" Width="450" Height="180" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="40" ShadowDepth="0" Color="{Binding Color, Source={StaticResource SakuraAccent}}" Opacity="0.7"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Выберите фигуру" Foreground="{StaticResource SakuraPink}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,20,0,10"/>
+
+                    <UniformGrid Grid.Row="1" Rows="1" Columns="4" Margin="15">
+                        <Button Style="{StaticResource PromotionButtonStyle}" Click="PromotionChoice_Click" Tag="Queen">
+                            <Image Width="50" Height="50" Source="{Binding Converter={StaticResource ColorToQueenImageConverter}}"/>
+                        </Button>
+                        <Button Style="{StaticResource PromotionButtonStyle}" Click="PromotionChoice_Click" Tag="Rook">
+                            <Image Width="50" Height="50" Source="{Binding Converter={StaticResource ColorToRookImageConverter}}"/>
+                        </Button>
+                        <Button Style="{StaticResource PromotionButtonStyle}" Click="PromotionChoice_Click" Tag="Bishop">
+                            <Image Width="50" Height="50" Source="{Binding Converter={StaticResource ColorToBishopImageConverter}}"/>
+                        </Button>
+                        <Button Style="{StaticResource PromotionButtonStyle}" Click="PromotionChoice_Click" Tag="Knight">
+                            <Image Width="50" Height="50" Source="{Binding Converter={StaticResource ColorToKnightImageConverter}}"/>
+                        </Button>
+                    </UniformGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

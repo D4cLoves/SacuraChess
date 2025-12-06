@@ -1,0 +1,489 @@
+﻿<Application x:Class="Lc_0_Chess.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Lc_0_Chess"
+             StartupUri="Views/MainMenu.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Themes/DarkTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Длительность анимаций -->
+            <Duration x:Key="AnimationDuration">0:0:0.3</Duration>
+
+            <!-- СУЩЕСТВУЮЩИЕ ЦВЕТА и КИСТИ "САКУРА" (ОРИГИНАЛ) -->
+            <Color x:Key="SakuraDarkPink" A="255" R="244" G="167" B="185"/>
+            <!-- #F4A7B9 -->
+            <Color x:Key="SakuraLightPink" A="255" R="255" G="209" B="220"/>
+            <!-- #FFD1DC -->
+            <Color x:Key="SakuraWhite" A="255" R="255" G="248" B="250"/>
+            <!-- #FFF8FA -->
+            <Color x:Key="SakuraLightWhite" A="255" R="255" G="249" B="251"/>
+            <!-- #FFF9FB -->
+            <Color x:Key="SakuraDarkCellStart" A="255" R="244" G="193" B="202"/>
+            <!-- #F4C1CA -->
+            <Color x:Key="SakuraDarkCellEnd" A="255" R="247" G="202" B="209"/>
+            <!-- #F7CAD1 -->
+            <Color x:Key="SakuraBackgroundBase" A="255" R="255" G="240" B="245"/>
+            <!-- #FFF0F5 (LavenderBlush) -->
+            <Color x:Key="SakuraAccentBorder" A="255" R="216" G="191" B="216"/>
+            <!-- #D8BFD8 (Thistle) -->
+            <Color x:Key="SakuraTextPrimary" A="255" R="74" G="74" B="74"/>
+            <!-- #4A4A4A -->
+            <Color x:Key="SakuraTextSecondary" A="255" R="219" G="112" B="147"/>
+            <!-- #DB7093 (PaleVioletRed) -->
+            <Color x:Key="SakuraButtonHover" A="255" R="255" G="182" B="193"/>
+            <!-- #FFB6C1 (LightPink) -->
+            <Color x:Key="SakuraBoardLightCell" A="255" R="255" G="245" B="238"/>
+            <!-- #FFF5EE (SeaShell) -->
+            <Color x:Key="SakuraBoardDarkCell" A="255" R="255" G="218" B="185"/>
+            <!-- #FFDAB9 (PeachPuff) -->
+            <Color x:Key="SakuraHighlight" A="255" R="255" G="105" B="180"/>
+            <!-- #FF69B4 (HotPink) -->
+
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource SakuraBackgroundBase}"/>
+            <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource SakuraTextPrimary}"/>
+            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SakuraTextSecondary}"/>
+            <SolidColorBrush x:Key="SakuraDarkPinkBrush" Color="{StaticResource SakuraDarkPink}"/>
+            <SolidColorBrush x:Key="SakuraLightPinkBrush" Color="{StaticResource SakuraLightPink}"/>
+            <SolidColorBrush x:Key="SakuraWhiteBrush" Color="{StaticResource SakuraWhite}"/>
+            <SolidColorBrush x:Key="SakuraButtonHoverBrush" Color="{StaticResource SakuraButtonHover}"/>
+            <SolidColorBrush x:Key="SakuraBorderBrush" Color="{StaticResource SakuraAccentBorder}"/>
+            <SolidColorBrush x:Key="BoardLightCellBrush" Color="#EFEFEF"/>
+            <SolidColorBrush x:Key="BoardDarkCellBrush" Color="#DFDFDF"/>
+            <SolidColorBrush x:Key="HighlightBrush" Color="#26FFB7C5"/>
+            <SolidColorBrush x:Key="KingInCheckBrush" Color="#33FF4D67"/>
+            <SolidColorBrush x:Key="CaptureHighlightBrush" Color="#26FF4D67"/>
+
+
+            <!-- СУЩЕСТВУЮЩИЕ СТИЛИ "САКУРА" (ОРИГИНАЛ) -->
+            <Style TargetType="Window" x:Key="SakuraWindowStyle">
+                <Setter Property="Background" Value="{StaticResource AppBackgroundBrush}"/>
+                <Setter Property="FontFamily" Value="Maple Mono"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="BaseTextBlockStyle">
+                <Setter Property="FontFamily" Value="Maple Mono"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="HeaderTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="FontSize" Value="24"/>
+                <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+                <Setter Property="Margin" Value="10"/>
+            </Style>
+
+            <Style TargetType="Button" x:Key="SakuraButtonStyle">
+                <Setter Property="FontFamily" Value="Maple Mono"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Foreground" Value="{StaticResource SakuraWhiteBrush}"/>
+                <Setter Property="Background" Value="{StaticResource SakuraDarkPinkBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SakuraLightPinkBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="MinWidth" Value="120"/>
+                <Setter Property="MinHeight" Value="40"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="5">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource SakuraButtonHoverBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="RadioButton" x:Key="SakuraRadioButtonStyle">
+                <Setter Property="FontFamily" Value="Maple Mono"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="ComboBox" x:Key="SakuraComboBoxStyle">
+                <Setter Property="FontFamily" Value="Maple Mono"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+                <Setter Property="Background" Value="{StaticResource SakuraWhiteBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SakuraBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="MinWidth" Value="150"/>
+            </Style>
+
+            <Style TargetType="Border" x:Key="ChessBoardBorderStyle">
+                <Setter Property="BorderThickness" Value="5"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="Background" Value="{StaticResource AppBackgroundBrush}"/>
+                <Setter Property="Padding" Value="5"/>
+            </Style>
+
+            <!-- ========================================================= -->
+            <!-- НОВЫЕ ЦВЕТА, КИСТИ И СТИЛИ ДЛЯ ТЕМНОЙ ТЕМЫ (Dark Theme) -->
+            <!-- ========================================================= -->
+
+            <!-- Основные цвета темной темы -->
+            <SolidColorBrush x:Key="DarkAppBackgroundBrush" Color="#FF1E1E1E"/>
+            <SolidColorBrush x:Key="DarkPanelBackgroundBrush" Color="#FF2D2D2D"/>
+            <SolidColorBrush x:Key="DarkBorderBrush" Color="#FF3E3E3E"/>
+            <SolidColorBrush x:Key="DarkTextBrush" Color="#FFEEEEEE"/>
+            <SolidColorBrush x:Key="DarkSecondaryTextBrush" Color="#FFB0B0B0"/>
+            <SolidColorBrush x:Key="DarkSecondaryBackgroundBrush" Color="#FF252525"/>
+            <SolidColorBrush x:Key="DarkPrimaryBackgroundBrush" Color="#FF2A2A2A"/>
+            <SolidColorBrush x:Key="DarkAccentBrush" Color="#FF007ACC"/>
+            <SolidColorBrush x:Key="DarkHighlightBrush" Color="#FF3399FF"/>
+
+            <!-- Цвета кнопок -->
+            <SolidColorBrush x:Key="DarkButtonBackgroundBrush" Color="#FF3E3E3E"/>
+            <SolidColorBrush x:Key="DarkButtonHoverBrush" Color="#FF4E4E4E"/>
+            <SolidColorBrush x:Key="DarkButtonPressedBrush" Color="#FF2E2E2E"/>
+
+            <!-- Цвета шахматной доски -->
+            <SolidColorBrush x:Key="DarkBoardLightCellBrush" Color="#2B2B2F"/>
+            <SolidColorBrush x:Key="DarkBoardDarkCellBrush" Color="#232325"/>
+            <SolidColorBrush x:Key="DarkBoardBorderBrush" Color="#FF404040"/>
+
+            <!-- Цвета выделения -->
+            <SolidColorBrush x:Key="DarkHighlightSelectionBrush" Color="#4CFFFFFF"/>
+            <SolidColorBrush x:Key="DarkHighlightCaptureBrush" Color="#4CFF5252"/>
+            <SolidColorBrush x:Key="DarkKingInCheckBrush" Color="#FFFF5252"/>
+            <SolidColorBrush x:Key="DarkPossibleMoveDotBrush" Color="#99212121"/>
+
+            <!-- Обновлённые цвета подсветки короля -->
+            <SolidColorBrush x:Key="KingCheckCellBrush" Color="#66FF8DA1"/> <!-- нежный полупрозрачный сакура-розовый -->
+            <SolidColorBrush x:Key="KingMateCellBrush" Color="#88CCCCCC"/> <!-- полупрозрачный серый для мата -->
+            <!-- Конец новых цветов -->
+
+            <!-- Цвета панели аналитики -->
+            <SolidColorBrush x:Key="DarkAnalyticsPanelBrush" Color="#FF2D2D2D"/>
+            <SolidColorBrush x:Key="DarkSplitterBrush" Color="#FF404040"/>
+
+            <!-- Эффекты -->
+            <DropShadowEffect x:Key="SoftShadowEffect"
+                             BlurRadius="15"
+                             ShadowDepth="3"
+                             Direction="270"
+                             Opacity="0.4"
+                             Color="#000000"/>
+
+            <!-- Эффект для доски -->
+            <DropShadowEffect x:Key="BoardShadowEffect"
+                             BlurRadius="20"
+                             ShadowDepth="5"
+                             Direction="270"
+                             Opacity="0.5"
+                             Color="#000000"/>
+
+            <!-- Стили текста -->
+            <Style x:Key="DarkBaseTextBlockStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+            </Style>
+
+            <Style x:Key="DarkHeaderTextBlockStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+
+            <!-- Стиль окна -->
+            <Style x:Key="DarkWindowStyle" TargetType="Window">
+                <Setter Property="Background" Value="{StaticResource DarkAppBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+            </Style>
+
+            <!-- Стиль кнопок -->
+            <Style x:Key="DarkVolumetricButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource DarkButtonBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="15,8"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="12">
+                                <ContentPresenter x:Name="contentPresenter"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                Content="{TemplateBinding Content}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                Margin="{TemplateBinding Padding}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource DarkButtonHoverBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource DarkButtonPressedBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Перемещенные ресурсы для ComboBox -->
+            <ControlTemplate x:Key="DarkComboBoxEditableTextBoxTemplate" TargetType="TextBox">
+                <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
+            </ControlTemplate>
+
+            <Style x:Key="DarkComboBoxToggleButtonStyle" TargetType="ToggleButton">
+                <Setter Property="OverridesDefaultStyle" Value="true"/>
+                <Setter Property="IsTabStop" Value="false"/>
+                <Setter Property="Focusable" Value="false"/>
+                <Setter Property="ClickMode" Value="Press"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="{StaticResource DarkPanelBackgroundBrush}"
+                                    BorderBrush="{StaticResource DarkBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    SnapsToDevicePixels="true">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Path x:Name="Arrow" Grid.Column="1" Fill="{StaticResource DarkPrimaryTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource DarkButtonBackgroundBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="true">
+                                    <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource DarkButtonPressedBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Fill" TargetName="Arrow" Value="{StaticResource DarkSecondaryTextBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Стиль ComboBox -->
+            <Style x:Key="DarkComboBoxStyle" TargetType="ComboBox">
+                <Setter Property="Background" Value="{StaticResource DarkButtonBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Border CornerRadius="12"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton Grid.Column="0" Grid.ColumnSpan="2"
+                                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Style="{StaticResource DarkComboBoxToggleButtonStyle}"/>
+                                    <ContentPresenter Grid.Column="0"
+                                                    IsHitTestVisible="False"
+                                                    Content="{TemplateBinding SelectionBoxItem}"
+                                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                    Margin="{TemplateBinding Padding}"/>
+                                    <Popup Grid.Column="0" Grid.ColumnSpan="2"
+                                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                                           Placement="Bottom"
+                                           PopupAnimation="Slide">
+                                        <Border CornerRadius="8"
+                                                Background="{StaticResource DarkPanelBackgroundBrush}"
+                                                BorderBrush="{StaticResource DarkBorderBrush}"
+                                                BorderThickness="1"
+                                                Margin="0,4,0,0">
+                                            <ScrollViewer SnapsToDevicePixels="True">
+                                                <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Стиль RadioButton -->
+            <Style x:Key="DarkRadioButtonStyle" TargetType="RadioButton">
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="Margin" Value="0,5"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border x:Name="border"
+                                    Background="Transparent"
+                                    CornerRadius="12"
+                                    BorderThickness="2"
+                                    BorderBrush="Transparent">
+                                <Grid>
+                                    <Border x:Name="checkBorder"
+                                            Width="20"
+                                            Height="20"
+                                            CornerRadius="10"
+                                            Background="{StaticResource DarkButtonBackgroundBrush}"
+                                            BorderBrush="{StaticResource DarkBorderBrush}"
+                                            BorderThickness="1"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            Margin="4,0,0,0">
+                                        <Ellipse x:Name="checkMark"
+                                                 Width="10"
+                                                 Height="10"
+                                                 Fill="{StaticResource DarkTextBrush}"
+                                                 Opacity="0"/>
+                                    </Border>
+                                    <ContentPresenter Margin="30,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Left"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="checkMark" Property="Opacity" Value="1"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource DarkButtonHoverBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Стиль для разделителя -->
+            <Style x:Key="DarkSplitterStyle" TargetType="GridSplitter">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Width" Value="1"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GridSplitter">
+                            <Border Background="{StaticResource DarkSplitterBrush}"
+                                    Width="4"
+                                    CornerRadius="2"
+                                    Cursor="SizeWE"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Стиль для панели аналитики -->
+            <Style x:Key="DarkAnalyticsPanelStyle" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource DarkAnalyticsPanelBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="16"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="15"
+                                        ShadowDepth="3"
+                                        Direction="270"
+                                        Opacity="0.4"
+                                        Color="#000000"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Стиль для шахматной доски -->
+            <Style TargetType="Border" x:Key="DarkChessBoardBorderStyle">
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="CornerRadius" Value="16"/>
+                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                <Setter Property="Background" Value="{StaticResource DarkPanelBackgroundBrush}"/>
+                <Setter Property="Padding" Value="12"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="20"
+                                        ShadowDepth="5"
+                                        Direction="270"
+                                        Opacity="0.5"
+                                        Color="#000000"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Стиль для клеток доски -->
+            <Style x:Key="ChessCellStyle" TargetType="Border">
+                <Setter Property="CornerRadius" Value="0"/>
+            </Style>
+
+            <!-- Стили для выбора времени -->
+            <Style x:Key="TimeControlBorderStyle" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource DarkSecondaryBackgroundBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="12"/>
+                <Setter Property="Padding" Value="15,10"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+
+            <Style x:Key="TimeControlHeaderStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="{StaticResource DarkAccentBrush}"/>
+                <Setter Property="Margin" Value="0,0,0,8"/>
+            </Style>
+
+            <!-- Стиль для ToolTip -->
+            <Style x:Key="DarkToolTipStyle" TargetType="ToolTip">
+                <Setter Property="Background" Value="{StaticResource DarkPrimaryBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="12"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Brush for highlighting the squares of the last move (from & to) -->
+            <SolidColorBrush x:Key="DarkLastMoveBrush" Color="#FFFF9800"/>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

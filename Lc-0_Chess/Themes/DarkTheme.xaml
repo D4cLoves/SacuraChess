@@ -1,0 +1,212 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Основные цвета -->
+    <SolidColorBrush x:Key="DarkPrimaryBackgroundBrush" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="DarkSecondaryBackgroundBrush" Color="#252526"/>
+    <SolidColorBrush x:Key="DarkPrimaryTextBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="DarkSecondaryTextBrush" Color="#9B9B9B"/>
+    <SolidColorBrush x:Key="DarkAccentBrush" Color="#007ACC"/>
+    <SolidColorBrush x:Key="DarkBorderBrush" Color="#3F3F3F"/>
+    <SolidColorBrush x:Key="DarkHighlightSelectionBrush" Color="#26FFB7C5"/>
+    <SolidColorBrush x:Key="DarkHighlightCaptureBrush" Color="#26FF4D67"/>
+    <SolidColorBrush x:Key="DarkKingInCheckBrush" Color="#33FF4D67"/>
+    <SolidColorBrush x:Key="DarkPossibleMoveDotBrush" Color="#1AFFB7C5"/>
+
+    <!-- Цвета шахматной доски -->
+    <SolidColorBrush x:Key="DarkBoardLightCellBrush" Color="#2B2B2F"/>
+    <SolidColorBrush x:Key="DarkBoardDarkCellBrush" Color="#232325"/>
+    <SolidColorBrush x:Key="DarkBoardBorderBrush" Color="#2D2D31"/>
+
+    <!-- Стили для окна -->
+    <Style x:Key="DarkWindowStyle" TargetType="Window">
+        <Setter Property="Background" Value="{StaticResource DarkPrimaryBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DarkPrimaryTextBrush}"/>
+    </Style>
+
+    <!-- Стили для текстовых блоков -->
+    <Style x:Key="DarkHeaderTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource DarkPrimaryTextBrush}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <Style x:Key="DarkBaseTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource DarkSecondaryTextBrush}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <!-- Стиль для объемных кнопок -->
+    <Style x:Key="DarkVolumetricButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource DarkAccentBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DarkPrimaryTextBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="15,5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#1C87D4"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#166CA8"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Стиль для RadioButton -->
+    <Style x:Key="DarkRadioButtonStyle" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource DarkPrimaryTextBrush}"/>
+        <Setter Property="Margin" Value="0,5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="18" Height="18"
+                                BorderThickness="2"
+                                BorderBrush="{StaticResource DarkSecondaryTextBrush}"
+                                CornerRadius="9"
+                                Margin="0,0,10,0">
+                            <Border x:Name="CheckMark"
+                                    Width="10" Height="10"
+                                    Background="{StaticResource DarkAccentBrush}"
+                                    CornerRadius="5"
+                                    Visibility="Collapsed"/>
+                        </Border>
+                        <ContentPresenter Grid.Column="1"
+                                          VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Стиль для ComboBox -->
+    <Style x:Key="DarkComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Background" Value="{StaticResource DarkPrimaryBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DarkPrimaryTextBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="8,4"/>
+    </Style>
+
+    <!-- Стиль для шахматной доски -->
+    <Style x:Key="ChessBoardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource DarkBoardBorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DarkBoardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="12"/>
+        <Setter Property="CornerRadius" Value="15"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="25"
+                                ShadowDepth="0"
+                                Direction="0"
+                                Opacity="0.3"
+                                Color="#FF8DA1"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Стиль для клеток доски -->
+    <Style x:Key="ChessCellStyle" TargetType="Border">
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <!-- Стиль для меток координат -->
+    <Style x:Key="CoordinateLabelStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#FF4D67"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+
+    <!-- Стиль для ScrollViewer -->
+    <Style x:Key="CustomScrollViewerStyle" TargetType="ScrollViewer">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ScrollContentPresenter Grid.Column="0"/>
+
+                        <!-- Кастомный скроллбар -->
+                        <ScrollBar x:Name="PART_VerticalScrollBar"
+                                 Grid.Column="1"
+                                 Value="{TemplateBinding VerticalOffset}"
+                                 Maximum="{TemplateBinding ScrollableHeight}"
+                                 ViewportSize="{TemplateBinding ViewportHeight}"
+                                 Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
+                            <ScrollBar.Style>
+                                <Style TargetType="ScrollBar">
+                                    <Setter Property="Width" Value="8"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ScrollBar">
+                                                <Grid>
+                                                    <Border x:Name="TrackBorder"
+                                                            Background="{StaticResource DarkSecondaryBackgroundBrush}"
+                                                            CornerRadius="4"
+                                                            Margin="0,2"/>
+                                                    <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                                        <Track.Thumb>
+                                                            <Thumb>
+                                                                <Thumb.Template>
+                                                                    <ControlTemplate TargetType="Thumb">
+                                                                        <Border x:Name="ThumbBorder"
+                                                                                Background="{StaticResource DarkAccentBrush}"
+                                                                                CornerRadius="4"
+                                                                                Margin="1,2"/>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter TargetName="ThumbBorder" Property="Background" Value="{StaticResource DarkHighlightBrush}"/>
+                                                                            </Trigger>
+                                                                            <Trigger Property="IsDragging" Value="True">
+                                                                                <Setter TargetName="ThumbBorder" Property="Background" Value="{StaticResource DarkHighlightBrush}"/>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Thumb.Template>
+                                                            </Thumb>
+                                                        </Track.Thumb>
+                                                    </Track>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ScrollBar.Style>
+                        </ScrollBar>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
