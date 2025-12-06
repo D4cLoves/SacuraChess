@@ -25,13 +25,13 @@
 <div align="center">
 
 ### Главное меню
-![Главное меню](docs/screenshots/MainMenu.png)
+<img src="docs/screenshots/MainMenu.png" alt="Главное меню" width="600"/>
 
 ### Игровая доска
-![Игровая доска](docs/screenshots/Game.png)
+<img src="docs/screenshots/Game.png" alt="Игровая доска" width="600"/>
 
 ### Настройки игры
-![Настройки игры](docs/screenshots/SettingGame.png)
+<img src="docs/screenshots/SettingGame.png" alt="Настройки игры" width="600"/>
 
 </div>
 
